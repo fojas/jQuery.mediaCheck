@@ -1,3 +1,5 @@
+// jQuery extension for checking if css media query is supported
+
 (function($){
 	$.mediaCheck = function (qry){
 		var ret,
