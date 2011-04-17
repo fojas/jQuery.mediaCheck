@@ -1,24 +1,25 @@
 // jQuery extension for checking if css media query is supported
 
-(function($){
-	$.mediaCheck = function (qry){
-		var ret,
-			style = document.createElement('style'),
-			id = 'mqc_'+Math.floor(Math.random()*100)+new Date().getTime(),
-			rules = document.createTextNode('@media '+qry+' {#'+id+'{visibility:hidden !important}}'),
-			head = $('head')[0];
-			body = $('body');
-		style.type = 'text/css';
-		if(style.styleSheet){style.styleSheet.cssText=rules.nodeValue;}
-		else{style.appendChild(rules);}
-		head.appendChild(style);
-		
-		// div should not be seen
-		body.prepend('<div id="'+id+'" style="display:none" />');
-		ret = $('#'+id).css('visibility') == 'hidden';
-		
-		//clean up
-		body.remove('#'+id);
-		return ret;
-	};
-})(jQuery);
+(function($,d){
+  $.mediaCheck = function (qry){
+    var ret,
+      doc = d.documentElement,
+      head = $('head')[0],
+      i = Math.floor(Math.random()*100)+new Date().getTime(),
+      body = $('<body />'); // we may not have a body if we are in the head
+
+    return mC = function(qry) {
+      var id = 'mc_'+(i++),
+        style = '<style type="text/css" >@media '+qry+' {#'+id+'{visibility:hidden !important}} </style>';
+
+      body.append(style);
+      body.append('<div id="'+id+'" style="display:none" />'); //div should not be seen
+      doc.appendChild(body[0]);
+      ret = $('#'+id).css('visibility') == 'hidden';
+      
+      //clean up
+      doc.removeChild(body[0]);
+      return ret;
+    }
+  }();
+})(jQuery,document);
